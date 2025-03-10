@@ -47,13 +47,18 @@ func listWorktrees() {
 
 	// Print worktree information in a tabular format
 	w := tabwriter.NewWriter(os.Stdout, 0, 0, 2, ' ', 0)
+
 	fmt.Fprintln(w, "PATH\tBRANCH\tCOMMIT")
 	for _, wt := range worktrees {
 		branchInfo := wt.Branch
 		if branchInfo == "" {
 			branchInfo = "(detached)"
 		}
-		fmt.Fprintf(w, "%s\t%s\t%s\n", wt.Path, branchInfo, wt.Commit[:7])
+		if wt.IsBare {
+			fmt.Fprintf(w, "%s\t%s\t%s\n", wt.Path, branchInfo, "n/a")
+		} else {
+			fmt.Fprintf(w, "%s\t%s\t%s\n", wt.Path, branchInfo, wt.Commit[:7])
+		}
 	}
 	w.Flush()
 }

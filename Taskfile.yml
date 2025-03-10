@@ -1,0 +1,66 @@
+version: '3'
+
+# Taskfile for git-manager
+# https://taskfile.dev
+
+# watch interval
+interval: '500ms'
+
+vars:
+  BINARY_NAME: git-manager
+  BUILD_DIR: ./build
+
+tasks:
+  default:
+    desc: Display available tasks
+    cmds:
+      - task --list
+
+  dev:
+    desc: Build the git-manager binary
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}
+      - go build -o {{.BUILD_DIR}}/{{.BINARY_NAME}} ./cmd/git-manager/main.go
+      - echo "Binary at {{.BUILD_DIR}}/{{.BINARY_NAME}}"
+    sources:
+      - '**/*.go'
+    generates:
+      - '{{.BUILD_DIR}}/{{.BINARY_NAME}}'
+    watch: true
+
+  build:
+    desc: Build the git-manager binary
+    deps: [dev]
+
+  test:
+    desc: Run tests
+    cmds:
+      - go test -v ./...
+
+  test:cover:
+    desc: Run tests with coverage
+    cmds:
+      - mkdir -p {{.BUILD_DIR}}
+      - go test -coverprofile={{.BUILD_DIR}}/coverage.out ./...
+      - go tool cover -html={{.BUILD_DIR}}/coverage.out
+
+  lint:
+    desc: Run linters
+    cmds:
+      - |
+        if command -v golangci-lint >/dev/null 2>&1; then
+          golangci-lint run
+        else
+          echo "golangci-lint is not installed. Run 'go install github.com/golangci/golangci-lint/cmd/golangci-lint@latest'"
+          exit 1
+        fi
+
+  fmt:
+    desc: Format code
+    cmds:
+      - gofmt -s -w .
+
+  clean:
+    desc: Clean build artifacts
+    cmds:
+      - rm -rf {{.BUILD_DIR}}

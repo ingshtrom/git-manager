@@ -8,16 +8,32 @@ import (
 	"strings"
 )
 
+type Repository struct {
+	Name string
+	Path string
+}
+
 // Info represents information about a git worktree
 type Info struct {
-	Path   string
-	Branch string
-	Commit string
-	IsBare bool
+	Repository Repository
+	Path       string
+	Branch     string
+	Commit     string
+	IsBare     bool
 }
 
 // GetWorktreeInfo returns information about all worktrees in the repository
 func GetWorktreeInfo(gitDir string) ([]Info, error) {
+	// Check if gitDir is a .git directory
+	gitDirInfo, err := os.Stat(gitDir)
+	if err != nil {
+		return nil, fmt.Errorf("error accessing git directory: %v", err)
+	}
+
+	if !gitDirInfo.IsDir() || filepath.Base(gitDir) != ".git" {
+		return nil, fmt.Errorf("path %s is not a .git directory", gitDir)
+	}
+
 	// Run git worktree list command with porcelain output
 	cmd := exec.Command("git", "-C", gitDir, "worktree", "list", "--porcelain")
 	output, err := cmd.Output()
@@ -45,7 +61,9 @@ func GetWorktreeInfo(gitDir string) ([]Info, error) {
 				worktrees = append(worktrees, *currentWorktree)
 			}
 			path := strings.TrimPrefix(line, "worktree ")
-			currentWorktree = &Info{Path: path}
+			currentWorktree = &Info{
+				Path: path,
+			}
 		} else if currentWorktree != nil {
 			if strings.HasPrefix(line, "branch ") {
 				branch := strings.TrimPrefix(line, "branch ")

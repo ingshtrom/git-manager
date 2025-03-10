@@ -34,5 +34,46 @@ git-manager switch [worktree-name]
 git-manager remove [worktree-name]
 ```
 
+## Development
+
+### Prerequisites
+- [Go](https://golang.org/doc/install) (version 1.24 or later)
+- [Task](https://taskfile.dev/#/installation) (optional, for running tasks)
+
+### Using Taskfile
+This project includes a Taskfile.yml for common development tasks. If you have [Task](https://taskfile.dev) installed, you can use the following commands:
+
+```bash
+# List all available tasks
+task
+
+# Build the application
+task build
+
+# Run the application
+task run
+
+# Run tests
+task test
+
+# Run tests with coverage
+task test:cover
+
+# Format code
+task fmt
+
+# Lint code
+task lint
+
+# Install git-manager globally
+task install
+
+# Clean build artifacts
+task clean
+
+# Run in development mode with hot reload (requires Air)
+task dev
+```
+
 ## License
 See the [LICENSE](LICENSE) file for details.
