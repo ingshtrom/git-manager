@@ -7,7 +7,7 @@
 *.dll
 *.so
 *.dylib
-git-manager
+/git-manager
 
 # Test binary, built with `go test -c`
 *.test
