@@ -23,7 +23,7 @@ Supported shell types: sh, bash, zsh, fish, nushell`,
 }
 
 func init() {
-	rootCmd.AddCommand(shellCmd)
+	toolCmd.AddCommand(shellCmd)
 }
 
 func generateShellIntegration(shellType string) {
