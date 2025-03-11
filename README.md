@@ -1,3 +1,7 @@
+# STATUS
+> ⚠️ **WARNING**: This project is no longer maintained. The core functionality of automatically changing directories when switching worktrees is not possible due to fundamental limitations in how shells interact with child processes. A child process cannot modify its parent shell's working directory. While shell integration scripts can work around this, they add significant complexity and are not reliable across all environments. For a simpler solution, consider using git worktrees directly or building your own aliases/commands to provide the experience you want.
+
+
 # git-manager
 Manage git repositories using Git worktrees.
 
@@ -17,48 +21,9 @@ Git worktrees are awesome, but to use them effectively, some prior organization 
 go install github.com/ingshtrom/git-manager@latest
 ```
 
-## Usage
-```bash
-# Initialize a new git-manager workspace
-git-manager init [repository-url]
-
-# List all worktrees
-git-manager list
-
-# Create a new worktree
-git-manager create [branch-name]
-
-# Switch to a worktree
-git-manager switch [worktree-name]
-
-# Remove a worktree
-git-manager remove [worktree-name]
-
-# Generate shell integration scripts
-git-manager shell [shell-type]
-```
-
 ## Shell Integration
 
 Since a command-line tool cannot directly change the parent shell's directory, `git-manager` provides shell integration to make directory switching seamless.
-
-### Setting Up Shell Integration
-
-Generate and install shell integration for your preferred shell:
-
-```bash
-# For Bash
-git-manager shell bash >> ~/.bashrc
-
-# For Zsh
-git-manager shell zsh >> ~/.zshrc
-
-# For Fish
-git-manager shell fish > ~/.config/fish/functions/git-manager.fish
-
-# For Nushell
-git-manager shell nushell >> ~/.config/nushell/config.nu
-```
 
 ### How It Works
 
@@ -88,42 +53,18 @@ gm switch feature-branch
 
 ### Prerequisites
 - [Go](https://golang.org/doc/install) (version 1.24 or later)
-- [Task](https://taskfile.dev/#/installation) (optional, for running tasks)
+- [Task](https://taskfile.dev/#/installation) (for running tasks)
 
-### Using Taskfile
-This project includes a Taskfile.yml for common development tasks. If you have [Task](https://taskfile.dev) installed, you can use the following commands:
+### Getting Started
 
+1. get the dev task running, this gets the binary built in near-real-time. It ouputs to the `./build` directory:
 ```bash
-# List all available tasks
-task
-
-# Build the application
-task build
-
-# Run the application
-task run
-
-# Run tests
-task test
-
-# Run tests with coverage
-task test:cover
-
-# Format code
-task fmt
-
-# Lint code
-task lint
-
-# Install git-manager globally
-task install
-
-# Clean build artifacts
-task clean
-
-# Run in development mode with hot reload (requires Air)
-task dev
+$ task dev
 ```
+2. [install the shell integration](#using-shell-integration)
+3. Modify your shell integration script to point to `<cwd>/build/git-manager` instead of the globally installed git-manager
+4. restart your shell so that the newest shell integration is active
+5. test with `gm` command
 
 ### Testing
 

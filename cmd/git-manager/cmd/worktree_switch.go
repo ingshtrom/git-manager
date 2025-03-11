@@ -19,7 +19,10 @@ When used with shell integration, it will automatically change the directory to 
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		worktreeName := args[0]
-		switchToWorktree(worktreeName)
+
+		fmt.Println("git-manager-eval:cd", worktreeName)
+		// os.Chdir(worktreeName)
+		// switchToWorktree(worktreeName)
 	},
 }
 

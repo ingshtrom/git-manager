@@ -16,11 +16,11 @@ var (
 	switchAfterCreate bool
 )
 
-var createCmd = &cobra.Command{
-	Use:   "create [branch-name]",
-	Short: "Create a new worktree",
-	Long: `Create a new worktree in the current git repository.
-This command will create a new worktree with the specified branch name.
+var worktreeAddCmd = &cobra.Command{
+	Use:   "add [branch-name]",
+	Short: "Add a new worktree",
+	Long: `Add a new worktree in the current git repository.
+This command will add a new worktree with the specified branch name.
 
 When used with shell integration, it can automatically change the directory to the new worktree.`,
 	Args: cobra.ExactArgs(1),
@@ -31,12 +31,12 @@ When used with shell integration, it can automatically change the directory to t
 }
 
 func init() {
-	worktreeCmd.AddCommand(createCmd)
+	worktreeCmd.AddCommand(worktreeAddCmd)
 
 	// Add flags
-	createCmd.Flags().BoolVarP(&createBranch, "create-branch", "b", true, "Create a new branch for the worktree")
-	createCmd.Flags().StringVarP(&baseBranch, "base", "", "main", "Base branch to create the new branch from (used with --create-branch)")
-	createCmd.Flags().BoolVarP(&switchAfterCreate, "switch", "s", true, "Switch to the new worktree after creation")
+	worktreeAddCmd.Flags().BoolVarP(&createBranch, "create-branch", "b", true, "Create a new branch for the worktree")
+	worktreeAddCmd.Flags().StringVarP(&baseBranch, "base", "", "main", "Base branch to create the new branch from (used with --create-branch)")
+	worktreeAddCmd.Flags().BoolVarP(&switchAfterCreate, "switch", "s", true, "Switch to the new worktree after creation")
 }
 
 func createWorktree(branchName string, createBranch bool, baseBranch string, switchAfterCreate bool) {
