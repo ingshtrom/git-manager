@@ -31,15 +31,8 @@ func listWorktrees() {
 		os.Exit(1)
 	}
 
-	// Find the git directory
-	gitDir, err := worktree.FindGitDir(currentDir)
-	if err != nil {
-		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
-		os.Exit(1)
-	}
-
 	// Get worktree information
-	worktrees, err := worktree.GetWorktreeInfo(gitDir)
+	worktrees, err := worktree.GetWorktreeInfo(currentDir)
 	if err != nil {
 		fmt.Fprintf(os.Stderr, "Error: %v\n", err)
 		os.Exit(1)

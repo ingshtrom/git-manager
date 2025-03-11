@@ -75,5 +75,34 @@ task clean
 task dev
 ```
 
+### Testing
+
+You can run tests locally:
+
+```bash
+# Run all tests
+task test
+
+# Run tests with coverage
+task test:cover
+```
+
+#### Docker-Based Testing
+
+For consistent testing across environments, you can run tests in Docker:
+
+```bash
+# Run all tests in Docker
+task test:docker
+
+# Run specific tests in Docker
+task test:docker:specific -- ./internal/worktree
+
+# Run tests with coverage in Docker
+task test:docker:cover
+```
+
+For more information about Docker-based testing, see [Docker Testing Documentation](docs/docker-testing.md).
+
 ## License
 See the [LICENSE](LICENSE) file for details.

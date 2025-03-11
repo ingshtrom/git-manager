@@ -23,19 +23,10 @@ type Info struct {
 }
 
 // GetWorktreeInfo returns information about all worktrees in the repository
-func GetWorktreeInfo(gitDir string) ([]Info, error) {
-	// Check if gitDir is a .git directory
-	gitDirInfo, err := os.Stat(gitDir)
-	if err != nil {
-		return nil, fmt.Errorf("error accessing git directory: %v", err)
-	}
-
-	if !gitDirInfo.IsDir() || filepath.Base(gitDir) != ".git" {
-		return nil, fmt.Errorf("path %s is not a .git directory", gitDir)
-	}
-
+// dir can be a .git directory or anywhere `git` commands can be run
+func GetWorktreeInfo(dir string) ([]Info, error) {
 	// Run git worktree list command with porcelain output
-	cmd := exec.Command("git", "-C", gitDir, "worktree", "list", "--porcelain")
+	cmd := exec.Command("git", "-C", dir, "worktree", "list", "--porcelain")
 	output, err := cmd.Output()
 	if err != nil {
 		return nil, fmt.Errorf("error listing worktrees: %v", err)
@@ -91,24 +82,26 @@ func GetWorktreeInfo(gitDir string) ([]Info, error) {
 
 // IsGitRepository checks if the given directory is a git repository
 func IsGitRepository(dir string) bool {
-	gitDir := filepath.Join(dir, ".git")
-	if info, err := os.Stat(gitDir); err == nil {
-		return info.IsDir()
+	return IsBareRepository(dir) || IsWorktree(dir)
+}
+
+func IsBareRepository(dir string) bool {
+	cmd := exec.Command("git", "-C", dir, "rev-parse", "--is-bare-repository")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
 	}
-	return false
+	return strings.TrimSpace(string(output)) == "true"
 }
 
 // IsWorktree checks if the given directory is a git worktree
 func IsWorktree(dir string) bool {
-	gitFile := filepath.Join(dir, ".git")
-	if info, err := os.Stat(gitFile); err == nil && !info.IsDir() {
-		content, err := os.ReadFile(gitFile)
-		if err != nil {
-			return false
-		}
-		return strings.HasPrefix(string(content), "gitdir: ")
+	cmd := exec.Command("git", "-C", dir, "rev-parse", "--is-inside-work-tree")
+	output, err := cmd.Output()
+	if err != nil {
+		return false
 	}
-	return false
+	return strings.TrimSpace(string(output)) == "true"
 }
 
 // FindGitDir attempts to find the .git directory by traversing up the directory tree

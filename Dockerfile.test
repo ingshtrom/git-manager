@@ -1,0 +1,23 @@
+FROM golang:1.24-bookworm
+
+# Install git and other dependencies
+RUN apt-get update && apt-get install -y git bash build-essential
+
+# Set up git configuration
+RUN git config --global user.name "Test User" && \
+    git config --global user.email "test@example.com" && \
+    git config --global init.defaultBranch main && \
+    git config --global commit.gpgsign false
+
+# Set working directory
+WORKDIR /app
+
+# Copy go.mod and go.sum first to leverage Docker cache
+COPY go.mod go.sum ./
+RUN go mod download
+
+# Copy the rest of the code
+COPY . .
+
+# Run tests by default
+CMD ["go", "test", "-v", "./..."] 

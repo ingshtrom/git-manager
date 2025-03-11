@@ -44,6 +44,29 @@ tasks:
       - go test -coverprofile={{.BUILD_DIR}}/coverage.out ./...
       - go tool cover -html={{.BUILD_DIR}}/coverage.out
 
+  # Docker-based testing tasks
+  test:docker:
+    desc: Run tests in Docker using Docker Compose
+    cmds:
+      - mkdir -p test-results
+      - echo "Running all tests..."
+      - docker compose -f docker-compose.test.yml up --build test
+
+  test:docker:specific:
+    desc: Run specific tests in Docker (e.g., task test:docker:specific -- ./internal/worktree)
+    cmds:
+      - mkdir -p test-results
+      - echo "Running specific tests..."
+      - docker compose -f docker-compose.test.yml run --rm test go test -v "{{.CLI_ARGS}}"
+
+  test:docker:cover:
+    desc: Run tests with coverage in Docker
+    deps: [test:docker]
+    cmds:
+      - echo "Coverage report at test-results/coverage.out"
+      - go tool cover -html=test-results/coverage.out -o test-results/coverage.html
+      - echo "HTML coverage report at test-results/coverage.html"
+
   lint:
     desc: Run linters
     cmds:
@@ -64,3 +87,4 @@ tasks:
     desc: Clean build artifacts
     cmds:
       - rm -rf {{.BUILD_DIR}}
+      - rm -rf test-results

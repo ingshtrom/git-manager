@@ -1,0 +1,12 @@
+services:
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    volumes:
+      # Mount the test results directory to persist test results
+      - ./test-results:/app/test-results
+    environment:
+      # Set environment variables for tests if needed
+      - GO_ENV=test
+    command: go test -v ./... -coverprofile=/app/test-results/coverage.out
