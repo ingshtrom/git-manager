@@ -12,8 +12,10 @@ import (
 var switchCmd = &cobra.Command{
 	Use:   "switch [worktree-name]",
 	Short: "Switch to a worktree",
-	Long: `Switch to a worktree in the current git-manager workspace.
-This command will print the path to the specified worktree and instructions on how to switch to it.`,
+	Long: `Switch to a worktree in the current git repository.
+This command will print the path to the specified worktree and instructions on how to switch to it.
+
+When used with shell integration, it will automatically change the directory to the worktree.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		worktreeName := args[0]
@@ -22,7 +24,7 @@ This command will print the path to the specified worktree and instructions on h
 }
 
 func init() {
-	rootCmd.AddCommand(switchCmd)
+	worktreeCmd.AddCommand(switchCmd)
 }
 
 func switchToWorktree(worktreeName string) {
@@ -73,11 +75,16 @@ func switchToWorktree(worktreeName string) {
 		os.Exit(1)
 	}
 
-	// Print instructions for switching to the worktree
+	// Print information about the worktree
 	fmt.Printf("Worktree path: %s\n", worktreePath)
-	fmt.Println("\nTo switch to this worktree, run:")
-	fmt.Printf("  cd %s\n", worktreePath)
 
-	// Since we can't actually change the user's current directory from within the program,
-	// we just provide instructions on how to do it.
+	// Output the special command for shell integration to evaluate
+	// This will be captured by the shell wrapper and executed
+	fmt.Printf("git-manager-eval:cd %q\n", worktreePath)
+
+	// Print instructions for users without shell integration
+	fmt.Println("\nIf you're not using shell integration, run:")
+	fmt.Printf("  cd %s\n", worktreePath)
+	fmt.Println("\nTo enable shell integration, run:")
+	fmt.Println("  git-manager shell [your-shell]")
 }

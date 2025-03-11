@@ -10,6 +10,7 @@ var rootCmd = &cobra.Command{
 	Long: `Git Manager is a CLI tool that helps you organize and manage 
 multiple git repositories using git worktrees. It simplifies the process 
 of working with multiple branches across repositories.`,
+
 	Run: func(cmd *cobra.Command, args []string) {
 		// If no subcommand is provided, print help
 		cmd.Help()
@@ -23,6 +24,10 @@ func Execute() error {
 }
 
 func init() {
+	// Disable the completion command
+	rootCmd.CompletionOptions.DisableDefaultCmd = true
+
+	// 	rootCmd.He
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.

@@ -11,31 +11,35 @@ import (
 )
 
 var (
-	createBranch bool
-	baseBranch   string
+	createBranch      bool
+	baseBranch        string
+	switchAfterCreate bool
 )
 
 var createCmd = &cobra.Command{
 	Use:   "create [branch-name]",
 	Short: "Create a new worktree",
-	Long: `Create a new worktree in the current git-manager workspace.
-This command will create a new worktree with the specified branch name.`,
+	Long: `Create a new worktree in the current git repository.
+This command will create a new worktree with the specified branch name.
+
+When used with shell integration, it can automatically change the directory to the new worktree.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
 		branchName := args[0]
-		createWorktree(branchName, createBranch, baseBranch)
+		createWorktree(branchName, createBranch, baseBranch, switchAfterCreate)
 	},
 }
 
 func init() {
-	rootCmd.AddCommand(createCmd)
+	worktreeCmd.AddCommand(createCmd)
 
 	// Add flags
-	createCmd.Flags().BoolVarP(&createBranch, "create-branch", "b", false, "Create a new branch for the worktree")
+	createCmd.Flags().BoolVarP(&createBranch, "create-branch", "b", true, "Create a new branch for the worktree")
 	createCmd.Flags().StringVarP(&baseBranch, "base", "", "main", "Base branch to create the new branch from (used with --create-branch)")
+	createCmd.Flags().BoolVarP(&switchAfterCreate, "switch", "s", true, "Switch to the new worktree after creation")
 }
 
-func createWorktree(branchName string, createBranch bool, baseBranch string) {
+func createWorktree(branchName string, createBranch bool, baseBranch string, switchAfterCreate bool) {
 	// Get current directory
 	currentDir, err := os.Getwd()
 	if err != nil {
@@ -83,6 +87,22 @@ func createWorktree(branchName string, createBranch bool, baseBranch string) {
 	}
 
 	fmt.Printf("\nWorktree created successfully at %s\n", worktreePath)
-	fmt.Println("\nYou can now cd into the worktree directory and start working:")
+
+	if switchAfterCreate {
+		// Output the special command for shell integration to evaluate
+		// This will be captured by the shell wrapper and executed
+		fmt.Printf("git-manager-eval:cd %q\n", worktreePath)
+	}
+
+	// Print instructions for users without shell integration
+	fmt.Println("\nIf you're not using shell integration, run:")
 	fmt.Printf("  cd %s\n", worktreePath)
+
+	if !switchAfterCreate {
+		fmt.Println("\nTo automatically switch to new worktrees, use the --switch flag:")
+		fmt.Printf("  git-manager create --switch %s\n", branchName)
+	}
+
+	fmt.Println("\nTo enable shell integration, run:")
+	fmt.Println("  git-manager shell [your-shell]")
 }

@@ -18,7 +18,7 @@ var (
 var removeCmd = &cobra.Command{
 	Use:   "remove [worktree-name]",
 	Short: "Remove a worktree",
-	Long: `Remove a worktree from the current git-manager workspace.
+	Long: `Remove a worktree from the current git repository.
 This command will remove the specified worktree.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -28,7 +28,7 @@ This command will remove the specified worktree.`,
 }
 
 func init() {
-	rootCmd.AddCommand(removeCmd)
+	worktreeCmd.AddCommand(removeCmd)
 
 	// Add flags
 	removeCmd.Flags().BoolVarP(&force, "force", "f", false, "Force removal even if the worktree is dirty")

@@ -11,8 +11,8 @@ import (
 
 var initCmd = &cobra.Command{
 	Use:   "init [repository-url]",
-	Short: "Initialize a new git-manager workspace",
-	Long: `Initialize a new git-manager workspace with a git repository.
+	Short: "Initialize a new git repository with worktrees setup",
+	Long: `Initialize a new git repository with worktrees setup.
 This command will clone the repository and set up the initial worktree structure.`,
 	Args: cobra.ExactArgs(1),
 	Run: func(cmd *cobra.Command, args []string) {
@@ -22,7 +22,7 @@ This command will clone the repository and set up the initial worktree structure
 }
 
 func init() {
-	rootCmd.AddCommand(initCmd)
+	repositoryCmd.AddCommand(initCmd)
 }
 
 func initWorkspace(repoURL string) {
